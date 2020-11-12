@@ -1,5 +1,6 @@
 from app.model.user import Users
-from app import response, app
+from app import response, app, db
+from flask import request
 
 def index():
     try:
@@ -35,3 +36,19 @@ def singleTransform(users):
     }
 
     return data
+
+def store():
+    try:
+        name = request.json['name']
+        email = request.json['email']
+        password = request.json['password']
+
+        users = Users(name=name, email=email)
+        users.setPassword(password)
+        db.session.add(users)
+        db.session.commit()
+
+        return response.ok('', 'successfully create user!')
+
+    except Exception as e:
+        print(e)
